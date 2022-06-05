@@ -41,7 +41,7 @@ export async function pathicTemplateAsync(options:PathicTemplateOptions)
 
         await Promise.all(promises);
 
-        await cmd('npm install @types/node typescript --save-dev');
+        await cmd('npm install @types/node typescript @iyio/pathic --save-dev');
 
         // tmp - move to templating system
         await cmd('npm install @types/aws-lambda @types/aws-sdk --save-dev');
@@ -70,8 +70,8 @@ async function getPackageJsonAsync(projectName:string,pFileName:string,targetDir
             "dist"
         ],
         scripts:{
-            build:"tsc",
-            "build-publish":"npm run build && npm publish"
+            build:"pathic-build",
+            "build-publish":"pathic-build && npm publish"
         },
         keywords:[],
         author:"",

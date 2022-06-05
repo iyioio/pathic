@@ -5,7 +5,7 @@ export interface PathicBuildOptions
      * @default 'tsconfig.json'
      * @alias b
      */
-    buildConfig?:string;
+    buildConfig:string;
 
     /**
      * If true the tsc command fill be ran
@@ -82,6 +82,7 @@ export interface PathicTemplateOptions
 }
 
 export const defaultPathicBuildOptions:Readonly<PathicBuildOptions>=Object.freeze({
+    buildConfig:'tsconfig.json',
     build:true,
     rmOut:true,
     replacePaths:true,
