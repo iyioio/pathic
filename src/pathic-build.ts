@@ -177,7 +177,7 @@ async function installNodeModuleAsync(
 
     const binSrc=Path.join(path.nodeModules,'.bin');
     const binDest=Path.join(nodeMods,'.bin');
-    if(options.copyBin && await existsAsync(binSrc)){
+    if(options.copyBin && await existsAsync(binSrc) && !existsAsync(binDest)){
         await Promise.all((await fs.readdir(binSrc)).map(async f=>{
             const src=Path.join(binSrc,f);
             const dest=Path.join(binDest,f);
