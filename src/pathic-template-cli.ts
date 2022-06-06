@@ -9,6 +9,7 @@ const options:PathicTemplateOptions=commandLineArgs([
     {name:'templateTarget',type:String,alias:'t',defaultValue:defaultPathicTemplateOptions.templateTarget},
     {name:'packageName',type:String,alias:'n',defaultValue:defaultPathicTemplateOptions.packageName},
     {name:'autoTsConfigExtends',type:Boolean,alias:'a',defaultValue:defaultPathicTemplateOptions.autoTsConfigExtends},
+    {name:'lib',type:Boolean,alias:'l',defaultValue:defaultPathicTemplateOptions.lib},
     
 ]) as any;
 

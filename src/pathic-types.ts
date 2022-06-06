@@ -58,6 +58,17 @@ export interface PathicBuildOptions
     copyBin:boolean;
 }
 
+export const defaultPathicBuildOptions:Readonly<PathicBuildOptions>=Object.freeze({
+    buildConfig:'tsconfig.json',
+    build:true,
+    rmOut:true,
+    replacePaths:true,
+    installNodeModules:true,
+    installDevDeps:false,
+    installPathModules:true,
+    copyBin:true,
+});
+
 export interface PathicTemplateOptions
 {
     /**
@@ -79,19 +90,44 @@ export interface PathicTemplateOptions
      * @alias a
      */
     autoTsConfigExtends:boolean;
+
+    /**
+     * If true the project will be setup as a library
+     * @default false
+     * @alias l
+     */
+    lib:boolean;
 }
 
-export const defaultPathicBuildOptions:Readonly<PathicBuildOptions>=Object.freeze({
-    buildConfig:'tsconfig.json',
-    build:true,
-    rmOut:true,
-    replacePaths:true,
-    installNodeModules:true,
-    installDevDeps:false,
-    installPathModules:true,
-    copyBin:true,
+export const defaultPathicTemplateOptions:Readonly<PathicTemplateOptions>=Object.freeze({
+    autoTsConfigExtends:true,
+    lib:false,
 });
 
-export const defaultPathicTemplateOptions:Readonly<PathicTemplateOptions>=Object.freeze({
-    autoTsConfigExtends:true
+export interface PathicUtilOptions
+{
+    /**
+     * Path to a directory that contains projects to build. The directory will be searched
+     * recursively for directories containing a package.json
+     * @alias b
+     */
+    batchBuild?:string;
+
+    /**
+     * The npm script used to build batch built project. If a project is found that has a matching
+     * script the project is built.
+     * @default 'build'
+     * @alias s
+     */
+    batchBuildNpmScript:string;
+
+    /**
+     * Overrides the build command used for batch builds
+     * @alias c
+     */
+    batchBuildCommand?:string;
+}
+
+export const defaultPathicUtilOptions:Readonly<PathicUtilOptions>=Object.freeze({
+    batchBuildNpmScript:'build'
 });

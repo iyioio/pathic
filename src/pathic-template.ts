@@ -1,4 +1,5 @@
 import { promises as fs } from "fs";
+import JSON5 from 'json5';
 import Path from 'path';
 import { cmd, existsAsync, findProjectRootAsync, TsConfig } from "./common";
 import { PathicTemplateOptions } from "./pathic-types";
@@ -32,11 +33,20 @@ export async function pathicTemplateAsync(options:PathicTemplateOptions)
         promises.push(fs.writeFile('tsconfig.json',JSON.stringify(tsConfig,null,4)));
         const monoRoot=tsConfig.extends?Path.resolve(Path.dirname(tsConfig.extends)):targetDir;
 
+        if(options.lib && tsConfig.extends){
+            promises.push(addAsLibAsync(
+                packageName,
+                Path.relative(
+                    Path.resolve(Path.dirname(tsConfig.extends)),
+                    Path.resolve('index')),
+                tsConfig.extends));
+        }
+
         const packageJson=await getPackageJsonAsync(packageName,pFileName,targetDir,monoRoot);
         promises.push(fs.writeFile('package.json',JSON.stringify(packageJson,null,4)));
 
-        promises.push(fs.writeFile(`${pFileName}-index.ts`,`export * from './${pFileName}-lib';\n`));
-        promises.push(fs.writeFile(`${pFileName}-lib.ts`,`export const packageName='${packageName}';\n`));
+        promises.push(fs.writeFile('index.ts',`export * from './${pFileName}';\n`));
+        promises.push(fs.writeFile(`${pFileName}.ts`,`export const packageName='${packageName}';\n`));
         promises.push(fs.writeFile(`.gitignore`,'node_modules/\ndist/\n'));
 
         await Promise.all(promises);
@@ -50,11 +60,19 @@ export async function pathicTemplateAsync(options:PathicTemplateOptions)
     }finally{
         process.chdir(cwd);
     }
+}
 
-
-
-
-
+async function addAsLibAsync(packageName:string,path:string,rootTsConfig:string)
+{
+    const config:TsConfig=JSON5.parse((await fs.readFile(rootTsConfig)).toString());
+    if(!config.compilerOptions){
+        config.compilerOptions={};
+    }
+    if(!config.compilerOptions.paths){
+        config.compilerOptions.paths={}
+    }
+    config.compilerOptions.paths[packageName]=[path];
+    await fs.writeFile(rootTsConfig,JSON.stringify(config,null,4));
 }
 
 async function getPackageJsonAsync(projectName:string,pFileName:string,targetDir:string,monoRoot:string)
@@ -64,8 +82,8 @@ async function getPackageJsonAsync(projectName:string,pFileName:string,targetDir
         name: projectName,
         version:"0.0.1",
         description:"",
-        main:'dist/'+Path.relative(monoRoot,Path.join(targetDir,`${pFileName}-index.js`)),
-        types:'dist/'+Path.relative(monoRoot,Path.join(targetDir,`${pFileName}-index.d.ts`)),
+        main:'dist/'+Path.relative(monoRoot,Path.join(targetDir,'index.js')),
+        types:'dist/'+Path.relative(monoRoot,Path.join(targetDir,'index.d.ts')),
         files:[
             "dist"
         ],
@@ -136,6 +154,7 @@ async function getTsConfigAsync(targetDir:string, autoExtend:boolean):Promise<Ts
         },
         "exclude": [
             "node_modules",
+            "dist",
         ]
     }
 }
