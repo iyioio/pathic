@@ -49,5 +49,8 @@ async function buildAsync(dir:string,options:PathicUtilOptions)
     }else{
         return;
     }
+    if(!await existsAsync(Path.join(dir,'node_modules'))){
+        await cmd(`cd ${dir} && npm ci`);
+    }
     await cmd(`cd ${dir} && ${buildCmd}`);
 }
