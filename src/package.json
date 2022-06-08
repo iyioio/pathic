@@ -1,6 +1,6 @@
 {
   "name": "@iyio/pathic",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "A templating a build system for typescript mono repos",
   "main": "dist/pathic-index.js",
   "types": "dist/pathic-index.d.ts",

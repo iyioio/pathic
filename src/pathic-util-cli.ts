@@ -9,6 +9,7 @@ const options:PathicUtilOptions=commandLineArgs([
     {name:'batchBuild',type:String,alias:'b',defaultValue:defaultPathicUtilOptions.batchBuild},
     {name:'batchBuildNpmScript',type:String,alias:'s',defaultValue:defaultPathicUtilOptions.batchBuildNpmScript},
     {name:'batchBuildCommand',type:String,alias:'c',defaultValue:defaultPathicUtilOptions.batchBuildCommand},
+    {name:'batchInstall',type:Boolean,alias:'i',defaultValue:defaultPathicUtilOptions.batchInstall},
     
 ]) as any;
 

@@ -52,5 +52,7 @@ async function buildAsync(dir:string,options:PathicUtilOptions)
     if(!await existsAsync(Path.join(dir,'node_modules'))){
         await cmd(`cd ${dir} && npm ci`);
     }
-    await cmd(`cd ${dir} && ${buildCmd}`);
+    if(!options.batchInstall){
+        await cmd(`cd ${dir} && ${buildCmd}`);
+    }
 }

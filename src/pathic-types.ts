@@ -120,6 +120,12 @@ export interface PathicUtilOptions
     batchBuild?:string;
 
     /**
+     * If true the batchBuild will only install deps and not run the build command.
+     * @alias i
+     */
+    batchInstall?:boolean;
+
+    /**
      * The npm script used to build batch built project. If a project is found that has a matching
      * script the project is built.
      * @default 'build'
