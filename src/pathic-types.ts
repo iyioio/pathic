@@ -56,6 +56,12 @@ export interface PathicBuildOptions
      * @alias k
      */
     copyBin:boolean;
+
+    /**
+     * A comma separated list of extra project paths to install node modules for.
+     * @alias x
+     */
+    extraProjects?:string;
 }
 
 export const defaultPathicBuildOptions:Readonly<PathicBuildOptions>=Object.freeze({

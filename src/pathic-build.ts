@@ -56,6 +56,25 @@ export async function pathicBuildAsync(options:PathicBuildOptions)
         path:mainConfig.dir
     }))
 
+    if(options.extraProjects){
+        let ei=0;
+        const extraProjects=options.extraProjects.split(',');
+        for(const p of extraProjects){
+            if(!p.trim()){
+                continue;
+            }
+            const path=Path.resolve(p);
+            usedPaths.push({
+                name:`extra-${ei++}`,
+                path,
+                packageJson:Path.join(path,'package.json'),
+                packageLockJson:Path.join(path,'package-lock.json'),
+                nodeModules:Path.join(path,'node_modules'),
+                root:path
+            })
+        }
+    }
+
     if(options.installNodeModules){
         await installNodeModulesAsync(mainConfig,usedPaths,options);
     }
