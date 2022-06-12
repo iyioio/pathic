@@ -6,12 +6,19 @@ import { PathicBuildOptions } from "./pathic-types";
 
 type Paths={[name:string]:string[]};
 
+interface BuildCtx
+{
+    rootDir:string;
+    mainConfig:TsConfigRef;
+    outDir:string;
+}
 
 interface TsConfigRef
 {
     path:string;
     dir:string;
     ourDir?:string;
+    rootDir?:string;
     baseUrl?:string;
     config:TsConfig;
 }
@@ -35,6 +42,7 @@ export async function pathicBuildAsync(options:PathicBuildOptions)
     if(!options.buildConfig){
         throw new Error('options.buildConfig required');
     }
+
     const configs=await loadConfigsAsync(options.buildConfig);
     const paths=getPaths(configs);
 
@@ -43,12 +51,18 @@ export async function pathicBuildAsync(options:PathicBuildOptions)
         throw new Error(`tsconfig.compilerOptions.outDir required. ${mainConfig.path}`)
     }
 
+    const ctx:BuildCtx={
+        rootDir:configs.reduce((p,c)=>c.rootDir||p,process.cwd()),
+        outDir:mainConfig.ourDir,
+        mainConfig,
+    }
+
     if(options.build){
         await tscAsync(mainConfig,options);
     }
 
     const usedPaths=await Promise.all(
-        (await replaceAsync(mainConfig.ourDir,paths,options))
+        (await replaceAsync(mainConfig.ourDir,paths,options,ctx))
         .map(p=>getPathUsageEx(p)));
 
     usedPaths.unshift(await getPathUsageEx({
@@ -214,15 +228,16 @@ async function replaceAsync(
     rPath:string,
     paths:Paths,
     options:PathicBuildOptions,
+    ctx:BuildCtx,
     usedPaths:PathUsage[]=[]):Promise<PathUsage[]>
 {
     const stats=await fs.stat(rPath);
     if(stats.isDirectory()){
         const files=await fs.readdir(rPath);
 
-        await Promise.all(files.map(f=>replaceAsync(Path.join(rPath,f),paths,options,usedPaths)));
+        await Promise.all(files.map(f=>replaceAsync(Path.join(rPath,f),paths,options,ctx,usedPaths)));
     }else{
-        await replaceFileAsync(rPath,paths,usedPaths,options);
+        await replaceFileAsync(rPath,paths,usedPaths,options,ctx);
     }
 
     return usedPaths;
@@ -232,7 +247,8 @@ async function replaceFileAsync(
     path:string,
     paths:Paths,
     usedPaths:PathUsage[],
-    options:PathicBuildOptions)
+    options:PathicBuildOptions,
+    ctx:BuildCtx)
 {
     if(!path.toLowerCase().endsWith('.js')){
         return;
@@ -254,7 +270,11 @@ async function replaceFileAsync(
             }
             changed=true;
             if(options.replacePaths){
-                const newPath=Path.relative(Path.basename(path),fullPath);
+                const target=path;
+                const newPath=
+                    Array<string>(strCount(target.substring(ctx.outDir.length),'/')-1)
+                    .fill('..').join('/')+
+                    fullPath.substring(ctx.rootDir.length);
                 return start+newPath+end;
             }else{
                 return match;
@@ -311,6 +331,8 @@ async function loadConfigsAsync(path:string, configs:TsConfigRef[]=[]):Promise<T
             Path.join(dir,config.compilerOptions.outDir):undefined,
         baseUrl:config.compilerOptions?.baseUrl?
             Path.join(dir,config.compilerOptions.baseUrl):undefined,
+        rootDir:config.compilerOptions?.rootDir?
+            Path.join(dir,config.compilerOptions.rootDir):undefined,
         config
     });
 
@@ -341,4 +363,15 @@ async function tscAsync(config:TsConfigRef, options:PathicBuildOptions)
     }finally{
         process.chdir(cwd);
     }
+}
+
+function strCount(str:string,char:string)
+{
+    let c=0;
+    for(let i=0;i<str.length;i++){
+        if(str[i]===char){
+            c++;
+        }
+    }
+    return c;
 }
