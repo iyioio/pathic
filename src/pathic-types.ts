@@ -163,6 +163,18 @@ export interface PathicWatchOptions
      * @alias e
      */
     extensions?:string[];
+
+    /**
+     * A banner message added to the top of copied file
+     * @alias b
+     */
+    banner?:string;
+
+    /**
+     * If true files are only synced once then pathic-watch exists
+     * @alias x
+     */
+    sync?:boolean;
 }
 
 export const defaultPathicWatchOptions:Readonly<PathicWatchOptions>=Object.freeze({

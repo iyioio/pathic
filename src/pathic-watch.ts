@@ -20,7 +20,11 @@ export async function pathicWatchAsync(options:PathicWatchOptions)
         `${targets.map(t=>'    '+t).join('\n')}\n)`)
 
 
-    await syncDir(dir,targets,exts);
+    await syncDir(dir,targets,exts,options);
+
+    if(options.sync){
+        return;
+    }
 
     try{
         const watcher=watch(dir);
@@ -31,9 +35,9 @@ export async function pathicWatchAsync(options:PathicWatchOptions)
             console.log(event);
             if(event.eventType==='change'){
                 await Promise.all(targets
-                    .map(t=>copy(Path.join(dir,event.filename),Path.join(t,event.filename))))
+                    .map(t=>copy(Path.join(dir,event.filename),Path.join(t,event.filename),options)))
             }else if(event.eventType==='rename'){
-                await syncDir(dir,targets,exts);
+                await syncDir(dir,targets,exts,options);
             }
         }
     }catch(err:any){
@@ -44,7 +48,7 @@ export async function pathicWatchAsync(options:PathicWatchOptions)
     }
 }
 
-async function syncDir(dir:string,targets:string[],exts:string[]|undefined)
+async function syncDir(dir:string,targets:string[],exts:string[]|undefined,options:PathicWatchOptions)
 {
     const startingFiles=filter(await readdir(dir),exts);
 
@@ -52,7 +56,7 @@ async function syncDir(dir:string,targets:string[],exts:string[]|undefined)
         console.log(`Sync ${t}`)
         await rm(t,{recursive:true,force:true});
         await mkdir(t,{recursive:true});
-        await Promise.all(startingFiles.map(f=>copy(Path.join(dir,f),Path.join(t,f))))
+        await Promise.all(startingFiles.map(f=>copy(Path.join(dir,f),Path.join(t,f),options)))
     }))
 }
 
@@ -64,10 +68,12 @@ function filter(ary:string[],exts:string[]|undefined){
     return ary.filter(p=>exts.some(e=>p.toLowerCase().endsWith(e)))
 }
 
-async function copy(src:string,dest:string){
+async function copy(src:string,dest:string,options:PathicWatchOptions){
     if(await existsAsync(src)){
         console.log(`${src} -> ${dest}`);
-        const content=`// This is a readonly copy of file://${Path.resolve(src)}\n\n`+
+        const content=
+            (options.banner?'/* '+options.banner+' */\n':'')+
+            `/* This is a readonly copy of file://${Path.resolve(src)} */\n\n`+
             (await readFile(src)).toString();
         if(await existsAsync(dest)){
             await chmod(dest,0o222);
