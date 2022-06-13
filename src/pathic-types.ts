@@ -143,3 +143,27 @@ export interface PathicUtilOptions
 export const defaultPathicUtilOptions:Readonly<PathicUtilOptions>=Object.freeze({
     batchBuildNpmScript:'build'
 });
+
+export interface PathicWatchOptions
+{
+    /**
+     * Source directory to watch
+     * @alias s
+     */
+    sourceDir?:string;
+
+    /**
+     * Destination directories to copy to
+     * @alias d
+     */
+    destDirs?:string[];
+
+    /**
+     * Filters by extension
+     * @alias e
+     */
+    extensions?:string[];
+}
+
+export const defaultPathicWatchOptions:Readonly<PathicWatchOptions>=Object.freeze({
+});

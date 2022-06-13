@@ -1,6 +1,6 @@
 {
   "name": "@iyio/pathic",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A templating a build system for typescript mono repos",
   "main": "dist/pathic-index.js",
   "types": "dist/pathic-index.d.ts",
@@ -17,7 +17,8 @@
   "bin": {
     "pathic-build": "dist/pathic-build-cli.js",
     "pathic-template": "dist/pathic-template-cli.js",
-    "pathic-util": "dist/pathic-util-cli.js"
+    "pathic-util": "dist/pathic-util-cli.js",
+    "pathic-watch": "dist/pathic-watch-cli.js"
   },
   "repository": {
     "type": "git",
