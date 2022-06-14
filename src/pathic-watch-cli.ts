@@ -11,6 +11,7 @@ const options:PathicWatchOptions=commandLineArgs([
     {name:'extensions',type:String,alias:'e',defaultValue:defaultPathicWatchOptions.extensions,multiple:true},
     {name:'banner',type:String,alias:'b',defaultValue:defaultPathicWatchOptions.banner},
     {name:'sync',type:Boolean,alias:'x',defaultValue:defaultPathicWatchOptions.sync},
+    {name:'verbose',type:Boolean,alias:'v',defaultValue:defaultPathicWatchOptions.verbose},
     
 ]) as any;
 

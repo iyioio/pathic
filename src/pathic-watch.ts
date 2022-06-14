@@ -1,11 +1,14 @@
 import { promises as fs } from 'node:fs';
 import Path from 'node:path';
-import { existsAsync } from "./common";
+import { existsAsync, verbose } from "./common";
 import { PathicWatchOptions } from "./pathic-types";
 
 
 export async function pathicWatchAsync(options:PathicWatchOptions)
 {
+    if(options.verbose){
+        verbose(true);
+    }
     const dir=options.sourceDir;
     if(!dir){
         throw new Error('--sourceDir required');

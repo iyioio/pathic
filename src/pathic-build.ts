@@ -1,7 +1,7 @@
 import JSON5 from 'json5';
 import { promises as fs } from 'node:fs';
 import Path from 'node:path';
-import { cmd, copyAsync, existsAsync, findProjectRootAsync, npmInstallAsync, TsConfig } from './common';
+import { cmd, copyAsync, existsAsync, findProjectRootAsync, npmInstallAsync, TsConfig, verbose } from './common';
 import { PathicBuildOptions } from "./pathic-types";
 
 type Paths={[name:string]:string[]};
@@ -39,6 +39,10 @@ interface PathUsageEx extends PathUsage
 
 export async function pathicBuildAsync(options:PathicBuildOptions)
 {
+    if(options.verbose){
+        verbose(true);
+    }
+    
     if(!options.buildConfig){
         throw new Error('options.buildConfig required');
     }

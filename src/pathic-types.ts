@@ -62,6 +62,12 @@ export interface PathicBuildOptions
      * @alias x
      */
     extraProjects?:string;
+
+    /**
+     * Verbose output
+     * @alias v
+     */
+    verbose?:boolean;
 }
 
 export const defaultPathicBuildOptions:Readonly<PathicBuildOptions>=Object.freeze({
@@ -103,6 +109,12 @@ export interface PathicTemplateOptions
      * @alias l
      */
     lib:boolean;
+
+    /**
+     * Verbose output
+     * @alias v
+     */
+    verbose?:boolean;
 }
 
 export const defaultPathicTemplateOptions:Readonly<PathicTemplateOptions>=Object.freeze({
@@ -138,6 +150,12 @@ export interface PathicUtilOptions
      * @alias c
      */
     batchBuildCommand?:string;
+
+    /**
+     * Verbose output
+     * @alias v
+     */
+    verbose?:boolean;
 }
 
 export const defaultPathicUtilOptions:Readonly<PathicUtilOptions>=Object.freeze({
@@ -175,6 +193,12 @@ export interface PathicWatchOptions
      * @alias x
      */
     sync?:boolean;
+
+    /**
+     * Verbose output
+     * @alias v
+     */
+    verbose?:boolean;
 }
 
 export const defaultPathicWatchOptions:Readonly<PathicWatchOptions>=Object.freeze({

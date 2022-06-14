@@ -1,13 +1,14 @@
 import JSON5 from 'json5';
 import { promises as fs } from "node:fs";
 import Path from 'node:path';
-import { cmd, existsAsync, findProjectRootAsync, TsConfig } from "./common";
+import { cmd, existsAsync, findProjectRootAsync, TsConfig, verbose } from "./common";
 import { PathicTemplateOptions } from "./pathic-types";
 
 export async function pathicTemplateAsync(options:PathicTemplateOptions)
 {
-
-
+    if(options.verbose){
+        verbose(true);
+    }
     if(!options.templateTarget){
         throw new Error('options.templateTarget required');
     }

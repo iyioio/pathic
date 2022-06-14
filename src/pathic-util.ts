@@ -1,7 +1,7 @@
 import JSON5 from 'json5';
 import { promises as fs } from "node:fs";
 import Path from "node:path";
-import { cmd, existsAsync } from "./common";
+import { cmd, existsAsync, verbose } from "./common";
 import { PathicUtilOptions } from "./pathic-types";
 
 const exclude=['node_modules','dist','out']
@@ -9,6 +9,9 @@ const exclude=['node_modules','dist','out']
 
 export async function pathicBatchBuildAsync(options:PathicUtilOptions)
 {
+    if(options.verbose){
+        verbose(true);
+    }
     if(!options.batchBuild){
         throw new Error('options.batchBuild required');
     }

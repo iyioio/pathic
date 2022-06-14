@@ -2,7 +2,15 @@ import { exec } from 'node:child_process';
 import { promises as fs } from 'node:fs';
 import Path from 'node:path';
 import { CompilerOptions } from 'typescript';
+import { TaskPool } from './TaskPool';
 
+let _verbose=false;
+export const verbose=(setValue?:boolean):boolean=>{
+    if(setValue!==undefined){
+        _verbose=setValue;
+    }
+    return _verbose;
+}
 
 export interface TsConfig{
     extends?:string;
@@ -27,20 +35,32 @@ export async function findProjectRootAsync(path:string, oPath:string, rootFile='
 
 export async function copyAsync(src:string,dest:string)
 {
+    const pool=new TaskPool();
+    await _copyAsync(src,dest,pool);
+    await pool.waitAsync();
+}
+
+async function _copyAsync(src:string,dest:string,pool:TaskPool)
+{
     const stats=await fs.lstat(src);
     if(stats.isDirectory()){
         await fs.mkdir(dest);
         await Promise.all((await fs.readdir(src))
-            .map(p=>copyAsync(Path.join(src,p),Path.join(dest,p))))
+            .map(p=>_copyAsync(Path.join(src,p),Path.join(dest,p),pool)))
     }else if(stats.isSymbolicLink()){
         const link=await fs.readlink(src);
         await fs.symlink(link,dest);
     }else{
-        if(fs.cp){
-            await fs.cp(src,dest);
-        }else{
-            await cmd(`cp "${src}" "${dest}"`);
-        }
+        pool.addTask(async ()=>{
+            if(_verbose){
+                console.info(`${src} -> ${dest}`);
+            }
+            if(fs.cp){
+                await fs.cp(src,dest);
+            }else{
+                await cmd(`cp "${src}" "${dest}"`);
+            }
+        });
     }
 }
 
@@ -93,5 +113,14 @@ export function cmd(cmd:string,silent=false,ignoreErrors=false):Promise<string>
                 r(stdout?.trim()||'');
             }
         })
+    })
+}
+
+export function delayAsync(ms:number)
+{
+    return new Promise<void>((r)=>{
+        setTimeout(()=>{
+            r();
+        },ms)
     })
 }

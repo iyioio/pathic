@@ -15,6 +15,7 @@ const options:PathicBuildOptions=commandLineArgs([
     {name:'installPathModules',type:Boolean,alias:'m',defaultValue:defaultPathicBuildOptions.installPathModules},
     {name:'copyBin',type:Boolean,alias:'k',defaultValue:defaultPathicBuildOptions.copyBin},
     {name:'extraProjects',type:String,alias:'x',defaultValue:defaultPathicBuildOptions.extraProjects},
+    {name:'verbose',type:Boolean,alias:'v',defaultValue:defaultPathicBuildOptions.verbose},
     
 ]) as any;
 
