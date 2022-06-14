@@ -39,7 +39,7 @@ export async function copyAsync(src:string,dest:string)
         if(fs.cp){
             await fs.cp(src,dest);
         }else{
-            await fs.writeFile(dest,await fs.readFile(src))
+            await cmd(`cp "${src}" "${dest}"`);
         }
     }
 }
