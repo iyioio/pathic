@@ -1,6 +1,6 @@
-import { promises as fs } from 'fs';
 import JSON5 from 'json5';
-import Path from 'path';
+import { promises as fs } from 'node:fs';
+import Path from 'node:path';
 import { cmd, copyAsync, existsAsync, findProjectRootAsync, npmInstallAsync, TsConfig } from './common';
 import { PathicBuildOptions } from "./pathic-types";
 

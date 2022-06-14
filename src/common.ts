@@ -1,6 +1,6 @@
-import { exec } from 'child_process';
-import { promises as fs } from 'fs';
-import Path from 'path';
+import { exec } from 'node:child_process';
+import { promises as fs } from 'node:fs';
+import Path from 'node:path';
 import { CompilerOptions } from 'typescript';
 
 

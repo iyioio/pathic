@@ -1,4 +1,4 @@
-import { chmod, mkdir, readdir, readFile, rm, watch, writeFile } from 'node:fs/promises';
+import { promises as fs } from 'node:fs';
 import Path from 'node:path';
 import { existsAsync } from "./common";
 import { PathicWatchOptions } from "./pathic-types";
@@ -27,7 +27,7 @@ export async function pathicWatchAsync(options:PathicWatchOptions)
     }
 
     try{
-        const watcher=watch(dir);
+        const watcher=fs.watch(dir);
         for await (const event of watcher){
             if(exts && !exts.some(e=>event.filename.toLowerCase().endsWith(e))){
                 continue;
@@ -50,12 +50,12 @@ export async function pathicWatchAsync(options:PathicWatchOptions)
 
 async function syncDir(dir:string,targets:string[],exts:string[]|undefined,options:PathicWatchOptions)
 {
-    const startingFiles=filter(await readdir(dir),exts);
+    const startingFiles=filter(await fs.readdir(dir),exts);
 
     await Promise.all(targets.map(async t=>{
         console.log(`Sync ${t}`)
-        await rm(t,{recursive:true,force:true});
-        await mkdir(t,{recursive:true});
+        await fs.rm(t,{recursive:true,force:true});
+        await fs.mkdir(t,{recursive:true});
         await Promise.all(startingFiles.map(f=>copy(Path.join(dir,f),Path.join(t,f),options)))
     }))
 }
@@ -74,15 +74,15 @@ async function copy(src:string,dest:string,options:PathicWatchOptions){
         const content=
             (options.banner?'/* '+options.banner+' */\n':'')+
             `/* This is a readonly copy of file://${Path.resolve(src)} */\n\n`+
-            (await readFile(src)).toString();
+            (await fs.readFile(src)).toString();
         if(await existsAsync(dest)){
-            await chmod(dest,0o222);
+            await fs.chmod(dest,0o222);
         }
-        await writeFile(dest,content);
-        await chmod(dest,0o444);
+        await fs.writeFile(dest,content);
+        await fs.chmod(dest,0o444);
     }else{
         console.log(`delete ${dest}`);
-        await chmod(dest,0o222);
-        await rm(dest,{force:true})
+        await fs.chmod(dest,0o222);
+        await fs.rm(dest,{force:true})
     }
 }
