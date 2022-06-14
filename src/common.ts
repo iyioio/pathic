@@ -36,7 +36,11 @@ export async function copyAsync(src:string,dest:string)
         const link=await fs.readlink(src);
         await fs.symlink(link,dest);
     }else{
-        await fs.cp(src,dest);
+        if(fs.cp){
+            await fs.cp(src,dest);
+        }else{
+            await fs.writeFile(dest,await fs.readFile(src))
+        }
     }
 }
 
