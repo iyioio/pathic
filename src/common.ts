@@ -58,7 +58,7 @@ async function _copyAsync(src:string,dest:string,pool:TaskPool)
             if(fs.cp){
                 await fs.cp(src,dest);
             }else{
-                await cmd(`cp "${src}" "${dest}"`);
+                await cmd(`cp "${src}" "${dest}"`,true);
             }
         });
     }
@@ -93,7 +93,7 @@ export function cmd(cmd:string,silent=false,ignoreErrors=false):Promise<string>
         if(!silent){
             console.info('> '+cmd);
         }
-        exec(cmd,(error,stdout,stderr)=>{
+        exec(cmd,{maxBuffer:1024*1000*10},(error,stdout,stderr)=>{
             if(error){
                 if(!silent){
                     console.error('| '+error);
