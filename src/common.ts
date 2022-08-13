@@ -44,7 +44,7 @@ async function _copyAsync(src:string,dest:string,pool:TaskPool)
 {
     const stats=await fs.lstat(src);
     if(stats.isDirectory()){
-        await fs.mkdir(dest);
+        await fs.mkdir(dest,{recursive:true});
         await Promise.all((await fs.readdir(src))
             .map(p=>_copyAsync(Path.join(src,p),Path.join(dest,p),pool)))
     }else if(stats.isSymbolicLink()){
