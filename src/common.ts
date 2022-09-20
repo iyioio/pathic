@@ -116,6 +116,22 @@ export function cmd(cmd:string,silent=false,ignoreErrors=false):Promise<string>
     })
 }
 
+export async function isGitIgnoredAsync(path:string):Promise<boolean>
+{
+    try{
+        if(path.includes('/') || path.includes('\\')){
+            const dir=Path.dirname(path);
+            path=Path.basename(path);
+            await cmd(`cd '${dir}' && git check-ignore '${path}'`,!_verbose);
+        }else{
+            await cmd(`git check-ignore '${path}'`,!_verbose);
+        }
+        return true;
+    }catch{
+        return false;
+    }
+}
+
 export function delayAsync(ms:number)
 {
     return new Promise<void>((r)=>{

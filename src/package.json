@@ -1,6 +1,6 @@
 {
   "name": "@iyio/pathic",
-  "version": "0.0.15",
+  "version": "0.0.17",
   "description": "A templating a build system for typescript mono repos",
   "main": "dist/pathic-index.js",
   "types": "dist/pathic-index.d.ts",
@@ -12,6 +12,9 @@
     "test-build-1": "PATHIC_MAX_CONCURRENT=1 ts-node pathic-build-cli.ts -v -b ../../helios-sphere/functions/consumer-resolver/tsconfig.json",
     "test-template": "ts-node pathic-template-cli.ts -t ../../helios-sphere/examples/cool -l -n @heliosvs/cool",
     "test-batch-build": "ts-node pathic-util-cli.ts -b ../../helios-sphere/functions",
+    "test-batch-install": "ts-node pathic-util-cli.ts -b ../../tmp/tmp-repo -i",
+    "test-batch-uninstall": "ts-node pathic-util-cli.ts -b ../../tmp/tmp-repo -u",
+    "test-batch-reinstall": "ts-node pathic-util-cli.ts -b ../../tmp/tmp-repo -i -u",
     "build": "tsc",
     "build-publish": "npm run build && npm publish"
   },

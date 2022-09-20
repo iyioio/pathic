@@ -143,7 +143,7 @@ export interface PathicUtilOptions
      * @default 'build'
      * @alias s
      */
-    batchBuildNpmScript:string;
+    batchBuildNpmScript?:string;
 
     /**
      * Overrides the build command used for batch builds
@@ -156,10 +156,34 @@ export interface PathicUtilOptions
      * @alias v
      */
     verbose?:boolean;
+
+    /**
+     * Comma separated list of filenames and directory names to exclude. Excluded values are not
+     * paths so slash characters can not be used.
+     * @default value 'node_modules,.git'
+     * @alias e
+     */
+    exclude?:string;
+
+    /**
+     * If true files and directories ignored by git will be included.
+     * @default false
+     * @alias g
+     */
+    includeIgnored?:boolean;
+
+    /**
+     * If true node_modules will be removed
+     * @default false
+     * @alias u
+     */
+    batchUninstall?:boolean;
 }
 
 export const defaultPathicUtilOptions:Readonly<PathicUtilOptions>=Object.freeze({
-    batchBuildNpmScript:'build'
+    exclude:'node_modules,.git',
+    includeIgnored:false,
+    removeNodeModules:false,
 });
 
 export interface PathicWatchOptions
