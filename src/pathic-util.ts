@@ -77,8 +77,21 @@ async function buildAsync(dir:string,options:PathicUtilOptions)
         nodeModulesExists=false;
     }
     if(!nodeModulesExists && (options.batchInstall || buildCmd)){
-        console.info(`Installing node_modules - ${dir}/package.json`);
-        await cmd(`cd ${dir} && npm ci`,!verbose());
+        const [lockExists,packageBuffer]=await Promise.all([
+            existsAsync(`${dir}/package-lock.json`),
+            fs.readFile(`${dir}/package.json`)
+        ])
+        const install=lockExists?'ci':'install';
+
+        console.info(`Installing node_modules ( npm ${install} ) - ${dir}/package.json`);
+
+        const packageJson=JSON5.parse(packageBuffer.toString());
+
+        if(packageJson.devDependencies || packageJson.dependencies){
+            await cmd(`cd ${dir} && npm ${install}`,!verbose());
+        }else{
+            console.info(`Skipping install. Package has no dependencies - ${dir}`);
+        }
     }
     if(buildCmd){
         console.info(`Building package - ${dir} - ${buildCmd}`);
